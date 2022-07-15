@@ -1,0 +1,527 @@
+{
+	"Name": "MyAIBehavior",
+	"Blackboard": 
+	{
+		"Keys": [
+			{
+				"Name": "TargetActor",
+				"Type": "Object",
+				"BaseClass": "Actor"
+			},
+			{
+				"Name": "MyAIState",
+				"Type": "Enum",
+				"EnumType": "MyAIStateEnum"
+			},
+			{
+				"Name": "SelfActor",
+				"Type": "Object",
+				"BaseClass": "Actor"
+			},
+			{
+				"Name": "RandomPos",
+				"Type": "Vector"
+			}
+		]
+	},
+	"Root": 
+	{
+		"Name": "BTComposite_Selector",
+		"Type": "Selector",
+		"Children": [
+			{
+				"ChildComposite": 
+				{
+					"Name": "BTComposite_Sequence",
+					"Type": "Sequence",
+					"Children": [
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "ChangeMoveSpeed_C",
+								"Type": "Blueprint",
+								"Property": null
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "MoveToRandomPos_C",
+								"Type": "Blueprint",
+								"Property": null
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_MoveTo",
+								"Type": "MoveTo",
+								"Property": 
+								{
+									"AcceptableRadius": "5.000000",
+									"BlackboardKey": "RandomPos"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						}
+					],
+					"Services": null
+				},
+				"ChildTask": null,
+				"DecoratorOps": null,
+				"Decorators": [
+					{
+						"Name": "BTDecorator_Blackboard",
+						"Type": "Blackboard",
+						"Property": 
+						{
+							"BlackboardKey": "MyAIState",
+							"OpsType": "Equal",
+							"IntValue": "0",
+							"FloatValue": "0.000000",
+							"StringValue": ""
+						}
+					}
+				]
+			},
+			{
+				"ChildComposite": 
+				{
+					"Name": "BTComposite_SimpleParallel",
+					"Type": "SimpleParallel",
+					"Children": [
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_Wait",
+								"Type": "Wait",
+								"Property": 
+								{
+									"WaitTime": "60.000000",
+									"RandomDeviation": "0.000000"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						}
+					],
+					"Services": null
+				},
+				"ChildTask": null,
+				"DecoratorOps": null,
+				"Decorators": [
+					{
+						"Name": "BTDecorator_CheckGameplayTagsOnActor",
+						"Type": "CheckGameplayTagsOnActor",
+						"Property": 
+						{
+							"ActorToCheck": "SelfActor",
+							"TagsToMatch": "Any",
+							"tags": null
+						}
+					},
+					{
+						"Name": "BTDecorator_CompareBBEntries",
+						"Type": "CompareBBEntries",
+						"Property": 
+						{
+							"BlackboardKeyA": "TargetActor",
+							"BlackboardKeyB": "TargetActor",
+							"Operation": "Equal"
+						}
+					},
+					{
+						"Name": "BTDecorator_ConditionalLoop",
+						"Type": "ConditionalLoop",
+						"Property": 
+						{
+							"BlackboardKey": "TargetActor",
+							"OpsType": "Set",
+							"IntValue": "0",
+							"FloatValue": "0.000000",
+							"StringValue": ""
+						}
+					},
+					{
+						"Name": "BTDecorator_ConeCheck",
+						"Type": "ConeCheck",
+						"Property": 
+						{
+							"ConeHalfAngle": "45.000000",
+							"ConeOrigin": "TargetActor",
+							"ConeDirection": "None",
+							"Observed": "TargetActor"
+						}
+					},
+					{
+						"Name": "BTDecorator_Cooldown",
+						"Type": "Cooldown",
+						"Property": 
+						{
+							"CoolDownTime": "5.000000"
+						}
+					},
+					{
+						"Name": "BTDecorator_DoesPathExist",
+						"Type": "DoesPathExist",
+						"Property": 
+						{
+							"BlackboardKeyA": "SelfActor",
+							"BlackboardKeyB": "TargetActor"
+						}
+					},
+					{
+						"Name": "BTDecorator_ForceSuccess",
+						"Type": "ForceSuccess",
+						"Property": null
+					},
+					{
+						"Name": "BTDecorator_IsAtLocation",
+						"Type": "IsAtLocation",
+						"Property": 
+						{
+							"BlackboardKey": "TargetActor",
+							"AcceptableRadius": "50.000000",
+							"GeometricDistanceType": "Distance3D",
+							"ParametrizedAcceptableRadius": "0.000000",
+							"bUseParametrizedRadius": "0",
+							"bUseNavAgentGoalLocation": "1",
+							"bPathFindingBasedTest": "1"
+						}
+					},
+					{
+						"Name": "BTDecorator_IsBBEntryOfClass",
+						"Type": "IsBBEntryOfClass",
+						"Property": 
+						{
+							"BlackboardKey": "TargetActor",
+							"TestClass": "None"
+						}
+					},
+					{
+						"Name": "BTDecorator_KeepInCone",
+						"Type": "KeepInCone",
+						"Property": 
+						{
+							"ConeHalfAngle": "45.000000",
+							"ConeOrigin": "SelfActor",
+							"Observed": "TargetActor"
+						}
+					},
+					{
+						"Name": "BTDecorator_Loop",
+						"Type": "Loop",
+						"Property": 
+						{
+							"NumLoops": "3",
+							"InfiniteLoop": "0",
+							"InfiniteLoopTimeoutTime": "-1.000000"
+						}
+					},
+					{
+						"Name": "BTDecorator_SetTagCooldown",
+						"Type": "SetTagCooldown",
+						"Property": 
+						{
+							"CooldownTag": "None",
+							"CooldownDuration": "5.000000",
+							"AddToExistingDuration": "0"
+						}
+					},
+					{
+						"Name": "BTDecorator_TimeLimit",
+						"Type": "TimeLimit",
+						"Property": 
+						{
+							"TimeLimit": "5.000000"
+						}
+					},
+					{
+						"Name": "BTDecorator_TagCooldown",
+						"Type": "TagCooldown",
+						"Property": 
+						{
+							"CooldownTag": "None",
+							"CooldownDuration": "5.000000",
+							"AddToExistingDuration": "0",
+							"ActivatesCooldown": "1"
+						}
+					}
+				]
+			},
+			{
+				"ChildComposite": 
+				{
+					"Name": "BTComposite_Sequence",
+					"Type": "Sequence",
+					"Children": [
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "ChangeMoveSpeed_C",
+								"Type": "Blueprint",
+								"Property": null
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_MoveTo",
+								"Type": "MoveTo",
+								"Property": 
+								{
+									"AcceptableRadius": "5.000000",
+									"BlackboardKey": "TargetActor"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_MakeNoise",
+								"Type": "MakeNoise",
+								"Property": 
+								{
+									"Loudnes": "1.000000"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_MoveDirectlyToward",
+								"Type": "MoveDirectlyToward",
+								"Property": 
+								{
+									"AcceptableRadius": "5.000000",
+									"BlackboardKey": "TargetActor"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_PlayAnimation",
+								"Type": "PlayAnimation",
+								"Property": 
+								{
+									"Animation": "ThirdPersonIdle",
+									"Loop": "0",
+									"Block": "0"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_PlaySound",
+								"Type": "PlaySound",
+								"Property": 
+								{
+									"Sound": "Collapse_Cue"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_PushPawnAction",
+								"Type": "PushPawnAction",
+								"Property": 
+								{
+									"Action": "PawnAction_Move_0"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_RotateToFaceBBEntry",
+								"Type": "RotateToFaceBBEntry",
+								"Property": 
+								{
+									"Precision": "10.000000",
+									"BlackboardKey": "TargetActor"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_RunBehavior",
+								"Type": "RunBehavior",
+								"Property": 
+								{
+									"Behavior": "None"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_WaitBlackboardTime",
+								"Type": "WaitBlackboardTime",
+								"Property": 
+								{
+									"BlackboardKey": "None"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_Wait",
+								"Type": "Wait",
+								"Property": 
+								{
+									"WaitTime": "5.000000",
+									"RandomDeviation": "0.000000"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_RunBehaviorDynamic",
+								"Type": "RunBehaviorDynamic",
+								"Property": 
+								{
+									"Tag": "asd",
+									"Behavior": "null"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_SetTagCooldown",
+								"Type": "SetTagCooldown",
+								"Property": 
+								{
+									"Tag": "None",
+									"Cooldown": "5.000000"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_RunEQSQuery",
+								"Type": "RunEQSQuery",
+								"Property": 
+								{
+									"QueryName": "null",
+									"BlackboardKey": "None",
+									"RunMode": "SingleResult",
+									"QueryConfig": null
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						}
+					],
+					"Services": null
+				},
+				"ChildTask": null,
+				"DecoratorOps": null,
+				"Decorators": [
+					{
+						"Name": "BTDecorator_Blackboard",
+						"Type": "Blackboard",
+						"Property": 
+						{
+							"BlackboardKey": "MyAIState",
+							"OpsType": "Equal",
+							"IntValue": "1",
+							"FloatValue": "0.000000",
+							"StringValue": ""
+						}
+					}
+				]
+			}
+		],
+		"Services": [
+			{
+				"Name": "BTService_RunEQS",
+				"Type": "RunEQS",
+				"Property": 
+				{
+					"BlackboardKey": "TargetActor",
+					"Interval": "0.500000",
+					"RandomDeviation": "0.100000",
+					"QueryName": "null",
+					"RunMode": "SingleResult",
+					"QueryConfig": null
+				}
+			},
+			{
+				"Name": "CheckIfAISeePlayer_C",
+				"Type": "Blueprint",
+				"Property": 
+				{
+					"Interval": "0.500000",
+					"RandomDeviation": "0.100000"
+				}
+			},
+			{
+				"Name": "BTService_DefaultFocus",
+				"Type": "DefaultFocus",
+				"Property": 
+				{
+					"BlackboardKey": "TargetActor",
+					"Interval": "0.500000",
+					"RandomDeviation": "0.100000"
+				}
+			}
+		]
+	}
+}
