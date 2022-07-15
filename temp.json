@@ -26,20 +26,20 @@
 	},
 	"Root": 
 	{
-		"Name": "BTComposite_Selector",
+		"Name": "BTComposite_Selector_0",
 		"Type": "Selector",
 		"Children": [
 			{
 				"ChildComposite": 
 				{
-					"Name": "BTComposite_Sequence",
+					"Name": "BTComposite_Sequence_3",
 					"Type": "Sequence",
 					"Children": [
 						{
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "ChangeMoveSpeed_C",
+								"Name": "ChangeMoveSpeed_C_2",
 								"Type": "Blueprint",
 								"Property": null
 							},
@@ -50,7 +50,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "MoveToRandomPos_C",
+								"Name": "MoveToRandomPos_C_0",
 								"Type": "Blueprint",
 								"Property": null
 							},
@@ -61,7 +61,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_MoveTo",
+								"Name": "BTTask_MoveTo_1",
 								"Type": "MoveTo",
 								"Property": 
 								{
@@ -79,7 +79,7 @@
 				"DecoratorOps": null,
 				"Decorators": [
 					{
-						"Name": "BTDecorator_Blackboard",
+						"Name": "BTDecorator_Blackboard_4",
 						"Type": "Blackboard",
 						"Property": 
 						{
@@ -95,14 +95,14 @@
 			{
 				"ChildComposite": 
 				{
-					"Name": "BTComposite_SimpleParallel",
+					"Name": "BTComposite_SimpleParallel_0",
 					"Type": "SimpleParallel",
 					"Children": [
 						{
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_Wait",
+								"Name": "BTTask_Wait_2",
 								"Type": "Wait",
 								"Property": 
 								{
@@ -120,7 +120,7 @@
 				"DecoratorOps": null,
 				"Decorators": [
 					{
-						"Name": "BTDecorator_CheckGameplayTagsOnActor",
+						"Name": "BTDecorator_CheckGameplayTagsOnActor_0",
 						"Type": "CheckGameplayTagsOnActor",
 						"Property": 
 						{
@@ -130,7 +130,7 @@
 						}
 					},
 					{
-						"Name": "BTDecorator_CompareBBEntries",
+						"Name": "BTDecorator_CompareBBEntries_0",
 						"Type": "CompareBBEntries",
 						"Property": 
 						{
@@ -140,7 +140,7 @@
 						}
 					},
 					{
-						"Name": "BTDecorator_ConditionalLoop",
+						"Name": "BTDecorator_ConditionalLoop_0",
 						"Type": "ConditionalLoop",
 						"Property": 
 						{
@@ -152,7 +152,7 @@
 						}
 					},
 					{
-						"Name": "BTDecorator_ConeCheck",
+						"Name": "BTDecorator_ConeCheck_0",
 						"Type": "ConeCheck",
 						"Property": 
 						{
@@ -163,7 +163,7 @@
 						}
 					},
 					{
-						"Name": "BTDecorator_Cooldown",
+						"Name": "BTDecorator_Cooldown_0",
 						"Type": "Cooldown",
 						"Property": 
 						{
@@ -171,7 +171,7 @@
 						}
 					},
 					{
-						"Name": "BTDecorator_DoesPathExist",
+						"Name": "BTDecorator_DoesPathExist_0",
 						"Type": "DoesPathExist",
 						"Property": 
 						{
@@ -180,12 +180,12 @@
 						}
 					},
 					{
-						"Name": "BTDecorator_ForceSuccess",
+						"Name": "BTDecorator_ForceSuccess_0",
 						"Type": "ForceSuccess",
 						"Property": null
 					},
 					{
-						"Name": "BTDecorator_IsAtLocation",
+						"Name": "BTDecorator_IsAtLocation_0",
 						"Type": "IsAtLocation",
 						"Property": 
 						{
@@ -199,7 +199,7 @@
 						}
 					},
 					{
-						"Name": "BTDecorator_IsBBEntryOfClass",
+						"Name": "BTDecorator_IsBBEntryOfClass_0",
 						"Type": "IsBBEntryOfClass",
 						"Property": 
 						{
@@ -208,7 +208,7 @@
 						}
 					},
 					{
-						"Name": "BTDecorator_KeepInCone",
+						"Name": "BTDecorator_KeepInCone_0",
 						"Type": "KeepInCone",
 						"Property": 
 						{
@@ -218,7 +218,7 @@
 						}
 					},
 					{
-						"Name": "BTDecorator_Loop",
+						"Name": "BTDecorator_Loop_0",
 						"Type": "Loop",
 						"Property": 
 						{
@@ -228,7 +228,7 @@
 						}
 					},
 					{
-						"Name": "BTDecorator_SetTagCooldown",
+						"Name": "BTDecorator_SetTagCooldown_0",
 						"Type": "SetTagCooldown",
 						"Property": 
 						{
@@ -238,7 +238,7 @@
 						}
 					},
 					{
-						"Name": "BTDecorator_TimeLimit",
+						"Name": "BTDecorator_TimeLimit_0",
 						"Type": "TimeLimit",
 						"Property": 
 						{
@@ -246,7 +246,7 @@
 						}
 					},
 					{
-						"Name": "BTDecorator_TagCooldown",
+						"Name": "BTDecorator_TagCooldown_0",
 						"Type": "TagCooldown",
 						"Property": 
 						{
@@ -261,14 +261,14 @@
 			{
 				"ChildComposite": 
 				{
-					"Name": "BTComposite_Sequence",
+					"Name": "BTComposite_Sequence_1",
 					"Type": "Sequence",
 					"Children": [
 						{
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "ChangeMoveSpeed_C",
+								"Name": "ChangeMoveSpeed_C_1",
 								"Type": "Blueprint",
 								"Property": null
 							},
@@ -279,7 +279,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_MoveTo",
+								"Name": "BTTask_MoveTo_0",
 								"Type": "MoveTo",
 								"Property": 
 								{
@@ -294,7 +294,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_MakeNoise",
+								"Name": "BTTask_MakeNoise_0",
 								"Type": "MakeNoise",
 								"Property": 
 								{
@@ -308,7 +308,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_MoveDirectlyToward",
+								"Name": "BTTask_MoveDirectlyToward_0",
 								"Type": "MoveDirectlyToward",
 								"Property": 
 								{
@@ -323,7 +323,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_PlayAnimation",
+								"Name": "BTTask_PlayAnimation_0",
 								"Type": "PlayAnimation",
 								"Property": 
 								{
@@ -339,7 +339,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_PlaySound",
+								"Name": "BTTask_PlaySound_0",
 								"Type": "PlaySound",
 								"Property": 
 								{
@@ -353,7 +353,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_PushPawnAction",
+								"Name": "BTTask_PushPawnAction_0",
 								"Type": "PushPawnAction",
 								"Property": 
 								{
@@ -367,7 +367,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_RotateToFaceBBEntry",
+								"Name": "BTTask_RotateToFaceBBEntry_0",
 								"Type": "RotateToFaceBBEntry",
 								"Property": 
 								{
@@ -382,7 +382,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_RunBehavior",
+								"Name": "BTTask_RunBehavior_0",
 								"Type": "RunBehavior",
 								"Property": 
 								{
@@ -396,7 +396,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_WaitBlackboardTime",
+								"Name": "BTTask_WaitBlackboardTime_0",
 								"Type": "WaitBlackboardTime",
 								"Property": 
 								{
@@ -410,7 +410,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_Wait",
+								"Name": "BTTask_Wait_0",
 								"Type": "Wait",
 								"Property": 
 								{
@@ -425,7 +425,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_RunBehaviorDynamic",
+								"Name": "BTTask_RunBehaviorDynamic_0",
 								"Type": "RunBehaviorDynamic",
 								"Property": 
 								{
@@ -440,7 +440,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_SetTagCooldown",
+								"Name": "BTTask_SetTagCooldown_0",
 								"Type": "SetTagCooldown",
 								"Property": 
 								{
@@ -455,7 +455,7 @@
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "BTTask_RunEQSQuery",
+								"Name": "BTTask_RunEQSQuery_0",
 								"Type": "RunEQSQuery",
 								"Property": 
 								{
@@ -475,7 +475,7 @@
 				"DecoratorOps": null,
 				"Decorators": [
 					{
-						"Name": "BTDecorator_Blackboard",
+						"Name": "BTDecorator_Blackboard_0",
 						"Type": "Blackboard",
 						"Property": 
 						{
@@ -491,7 +491,7 @@
 		],
 		"Services": [
 			{
-				"Name": "BTService_RunEQS",
+				"Name": "BTService_RunEQS_0",
 				"Type": "RunEQS",
 				"Property": 
 				{
@@ -504,7 +504,7 @@
 				}
 			},
 			{
-				"Name": "CheckIfAISeePlayer_C",
+				"Name": "CheckIfAISeePlayer_C_0",
 				"Type": "Blueprint",
 				"Property": 
 				{
@@ -513,7 +513,7 @@
 				}
 			},
 			{
-				"Name": "BTService_DefaultFocus",
+				"Name": "BTService_DefaultFocus_0",
 				"Type": "DefaultFocus",
 				"Property": 
 				{

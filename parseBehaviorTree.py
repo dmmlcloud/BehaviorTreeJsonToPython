@@ -1,7 +1,5 @@
-import json
-import behaviorTreeType
 import propertyType
-
+import behaviorTreeType
 
 def parseTaskProperty(property, _type):
     if _type == "Blueprint":
@@ -197,26 +195,3 @@ def parseCompositeNode(compositeNode):
     newComposite = behaviorTreeType.CompositeNode(
         compositeName, compositeType, parseChildren, parseServices)
     return newComposite
-
-
-if __name__ == "__main__":
-    BTAsset = open("temp.json", "r", encoding="utf-8")
-    bt = json.load(BTAsset)
-    # first parse last construct
-    # parse behaviorTree
-    btName = bt["Name"]
-    btBlackboard = bt["Blackboard"]
-    btRoot = bt["Root"]
-    keys = []
-    for entry in btBlackboard["Keys"]:
-        if entry["Type"] == "Object" or entry["Type"] == "Class":
-            insertEntry = behaviorTreeType.BlackboardGeneratedKey(
-                entry["Name"], entry["Type"], entry["BaseClass"])
-        else:
-            insertEntry = behaviorTreeType.BlackboardKey(
-                entry["Name"], entry["Type"])
-        keys.append(insertEntry)
-    newBlackboard = behaviorTreeType.Blackboard(keys)
-    newComposite = parseCompositeNode(btRoot)
-    pyBT = behaviorTreeType.BehaviorTree(btName, newBlackboard, newComposite)
-    print(bt)
