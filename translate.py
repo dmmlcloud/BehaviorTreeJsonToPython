@@ -6,7 +6,7 @@ import parseBehaviorTree
 def initialize(file):
     initialString = "import threading\n"
     initialString += "import ue\n"
-    initialString += "serviceList = []\n\n"
+    initialString += "\nserviceList = []\n\n"
     file.write(initialString)
 
 
@@ -40,10 +40,14 @@ def translateNodeFunction(node, file):
         for service in node._services:
             transString = service.translate()
             file.write(transString)
+    
+    # node self
+    transString = node.translate()
+    file.write(transString)
 
 
 def translateBTBegin(file):
-    file.write("def RunPyBehaviorTree:\n")
+    file.write("def RunPyBehaviorTree():\n")
 
 
 def translateRoot(compositeNode, file):
@@ -69,16 +73,7 @@ if __name__ == "__main__":
     btName = bt["Name"]
     btBlackboard = bt["Blackboard"]
     btRoot = bt["Root"]
-    keys = []
-    for entry in btBlackboard["Keys"]:
-        if entry["Type"] == "Object" or entry["Type"] == "Class":
-            insertEntry = behaviorTreeType.BlackboardGeneratedKey(
-                entry["Name"], entry["Type"], entry["BaseClass"])
-        else:
-            insertEntry = behaviorTreeType.BlackboardKey(
-                entry["Name"], entry["Type"])
-        keys.append(insertEntry)
-    newBlackboard = behaviorTreeType.Blackboard(keys)
-    newComposite = parseBehaviorTree.parseCompositeNode(btRoot)
+    newBlackboard = parseBehaviorTree.parseBlackboard(btBlackboard)
+    newComposite = parseBehaviorTree.parseCompositeNode(btRoot, newBlackboard)
     pyBT = behaviorTreeType.BehaviorTree(btName, newBlackboard, newComposite)
     translateBehaviorTree(pyBT)

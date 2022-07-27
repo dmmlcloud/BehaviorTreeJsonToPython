@@ -51,12 +51,13 @@ class BlackboardGeneratedKey:
 
 
 class CompositeNode:
-    def __init__(self, _name, _type, _children, _services, _finishMode):
+    def __init__(self, _name, _type, _children, _services, _finishMode, _blackboard):
         self._name = _name
         self._type = _type
         self._children = _children
         self._services = _services
         self._finishMode = _finishMode
+        self._blackboard = _blackboard
 
     def translate(self):
         # translate node to function, use node name as function's name
@@ -78,6 +79,7 @@ class CompositeNode:
                 for child in self._children:
                     # if have decorator, call function and judge from the
                     # result of the decorator function
+                    indent = "\t"
                     if child._decorators is not None:
                         transString += indent + "if "
                         for i, decorator in enumerate(child._decorators):
@@ -95,13 +97,14 @@ class CompositeNode:
                     if child._childTask is not None:
                         transString += indent + "if " + \
                             child._childTask._name + "():\n" + indent + \
-                            "\treturn True"
+                            "\treturn True\n"
                 transString += indent + "return False\n"
         # sequence
         indent = "\t"
         if self._type == "Sequence":
             if self._children is not None:
                 for child in self._children:
+                    indent = "\t"
                     if child._decorators is not None:
                         transString += indent + "if "
                         for i, decorator in enumerate(child._decorators):
@@ -127,6 +130,7 @@ class CompositeNode:
         if self._type == "SimpleParallel":
             if self._children is not None:
                 for child in self._children:
+                    indent = "\t"
                     if child._decorators is not None:
                         transString += indent + "if "
                         for i, decorator in enumerate(child._decorators):
@@ -177,7 +181,7 @@ class TaskNode:
         self._property = _property
         self._blackboard = _blackboard
 
-    def translate(self, blueprintParam):
+    def translate(self):
         transString = "def " + self._name + "():\n"
         indent = "\t"
         if self._type == "MoveTo":
@@ -216,16 +220,16 @@ class TaskNode:
         return transString
 
     def translateBlueprint(self):
-        transString = "def " + self._name + "():\n"
+        transString = ""
         indent = "\t"
         # for test
         if "printFirst" in self._name:
-            transString += indent + "print(\"First print String\")\n"
+            transString += indent + "print(\"First print String\")\n\n"
         if "printSecond" in self._name:
-            transString += indent + "print(\"Second print String!!!!!!!!!\")\n"
+            transString += indent + "print(\"Second print String!!!!!!!!!\")\n\n"
         if "changeBlackboard" in self._name:
             transString += indent + "Blackboard[\"Print\"] = " + \
-                "not Blackboard[\"Print\"]\n"
+                "not Blackboard[\"Print\"]\n\n"
         return transString
 
 
@@ -286,7 +290,7 @@ class DecoratorNode:
         return transString
 
     def translateBlackboardNode(self):
-        transString = "def " + self._name + "():\n"
+        transString = ""
         indent = "\t"
         blackboardKey = self._property.blackboardKey
         keyEntry = self._blackboard.findEntry(blackboardKey)

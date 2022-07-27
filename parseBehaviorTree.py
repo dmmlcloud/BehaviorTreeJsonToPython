@@ -1,6 +1,17 @@
 import propertyType
 import behaviorTreeType
 
+def parseBlackboard(blackboard):
+    keys = []
+    for entry in blackboard["Keys"]:
+        if entry["Type"] == "Object" or entry["Type"] == "Class":
+            insertEntry = behaviorTreeType.BlackboardGeneratedKey(
+                entry["Name"], entry["Type"], entry["BaseClass"])
+        else:
+            insertEntry = behaviorTreeType.BlackboardKey(
+                entry["Name"], entry["Type"])
+        keys.append(insertEntry)
+    return behaviorTreeType.Blackboard(keys)
 
 def parseTaskProperty(property, _type):
     if _type == "Blueprint":
@@ -49,11 +60,11 @@ def parseTaskProperty(property, _type):
     return parseProperty
 
 
-def parseTaskNode(taskNode):
+def parseTaskNode(taskNode, blackboard):
     taskName = taskNode["Name"]
     taskType = taskNode["Type"]
     taskProperty = parseTaskProperty(taskNode["Property"], taskType)
-    newTaskNode = behaviorTreeType.TaskNode(taskName, taskType, taskProperty)
+    newTaskNode = behaviorTreeType.TaskNode(taskName, taskType, taskProperty, blackboard)
     return newTaskNode
 
 
@@ -125,7 +136,7 @@ def parseDecoratorProperty(property, _type):
     return parseProperty
 
 
-def parseDecorator(decoratorNodes):
+def parseDecorator(decoratorNodes, blackboard):
     decoratorNodeList = []
     for decoratorNode in decoratorNodes:
         decoratorName = decoratorNode["Name"]
@@ -133,7 +144,7 @@ def parseDecorator(decoratorNodes):
         decoratorProperty = parseDecoratorProperty(
             decoratorNode["Property"], decoratorType)
         newDecoratorNode = behaviorTreeType.DecoratorNode(
-            decoratorName, decoratorType, decoratorProperty)
+            decoratorName, decoratorType, decoratorProperty, blackboard)
         decoratorNodeList.append(newDecoratorNode)
     return decoratorNodeList
 
@@ -163,7 +174,7 @@ def parseServiceProperty(property, _type):
     return parseProperty
 
 
-def parseCompositeNode(compositeNode):
+def parseCompositeNode(compositeNode, blackboard):
     compositeName = compositeNode["Name"]
     compositeType = compositeNode["Type"]
     compositeFinishMode = compositeNode["FinishMode"]
@@ -176,11 +187,11 @@ def parseCompositeNode(compositeNode):
         childDecorator = None
         childDecoratorOp = None
         if child["ChildComposite"] is not None:
-            childComposite = parseCompositeNode(child["ChildComposite"])
+            childComposite = parseCompositeNode(child["ChildComposite"], blackboard)
         if child["ChildTask"] is not None:
-            childTask = parseTaskNode(child["ChildTask"])
+            childTask = parseTaskNode(child["ChildTask"], blackboard)
         if child["Decorators"] is not None:
-            childDecorator = parseDecorator(child["Decorators"])
+            childDecorator = parseDecorator(child["Decorators"], blackboard)
         if child["DecoratorOps"] is not None:
             childDecoratorOp = parseDecoratorOp(child["DecoratorOps"])
         child = behaviorTreeType.ChildNode(childComposite, childTask,
@@ -196,5 +207,5 @@ def parseCompositeNode(compositeNode):
             parseServices.append(newService)
     newComposite = behaviorTreeType.CompositeNode(
         compositeName, compositeType, parseChildren, parseServices,
-        compositeFinishMode)
+        compositeFinishMode, blackboard)
     return newComposite
