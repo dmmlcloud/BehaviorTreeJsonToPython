@@ -74,6 +74,7 @@ class TaskRunEQSQueryProperty:
         self.runMode = runMode
         self.queryConfig = queryConfig
 
+
 # Decorator node
 
 
@@ -112,8 +113,7 @@ class DecoratorConditionLoopProperty:
 
 
 class DecoratorConeCheckProperty:
-    def __init__(self, coneHalfAngle, coneOrigin, coneDirection,
-                 observed):
+    def __init__(self, coneHalfAngle, coneOrigin, coneDirection, observed):
         self.coneHalfAngle = coneHalfAngle
         self.coneOrigin = coneOrigin
         self.coneDirection = coneDirection
@@ -132,10 +132,9 @@ class DecoratorDoesPathExistProperty:
 
 
 class DecoratorIsAtLocationProperty:
-    def __init__(self, blackboardKey, acceptableRadius,
-                 geometricDistanceType, parametrizedAcceptableRadius,
-                 bUseParametrizedRadius, bUseNavAgentGoalLocation,
-                 bPathFindingBasedTest):
+    def __init__(self, blackboardKey, acceptableRadius, geometricDistanceType,
+                 parametrizedAcceptableRadius, bUseParametrizedRadius,
+                 bUseNavAgentGoalLocation, bPathFindingBasedTest):
         self.blackboardKey = blackboardKey
         self.acceptableRadius = acceptableRadius
         self.geometricDistanceType = geometricDistanceType

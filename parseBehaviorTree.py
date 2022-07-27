@@ -1,6 +1,7 @@
 import propertyType
 import behaviorTreeType
 
+
 def parseTaskProperty(property, _type):
     if _type == "Blueprint":
         return None
@@ -165,6 +166,7 @@ def parseServiceProperty(property, _type):
 def parseCompositeNode(compositeNode):
     compositeName = compositeNode["Name"]
     compositeType = compositeNode["Type"]
+    compositeFinishMode = compositeNode["FinishMode"]
     compositeChildren = compositeNode["Children"]
     compositeServices = compositeNode["Services"]
     parseChildren = []
@@ -193,5 +195,6 @@ def parseCompositeNode(compositeNode):
                 service["Name"], service["Type"], serviceProperty)
             parseServices.append(newService)
     newComposite = behaviorTreeType.CompositeNode(
-        compositeName, compositeType, parseChildren, parseServices)
+        compositeName, compositeType, parseChildren, parseServices,
+        compositeFinishMode)
     return newComposite
