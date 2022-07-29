@@ -3,15 +3,15 @@ import behaviorTreeType
 import parseBehaviorTree
 
 
-def initialize(file):
-    initialString = "import threading\n"
-    initialString += "import ue\n"
-    initialString += "\nserviceList = []\n\n"
+def initialize(file, blackboard: behaviorTreeType.Blackboard):
+    initialString = "import ue\n\n"
+    initialString += "class MyBehaviorTree:\n"
+    initialString += "\tdef __init__(self, robot):\n"
+    initialString += "\t\tself.robot = robot\n"
+    initialString += "\t\tself.servicesList = []\n"
+    initialString += "\t\tself.blackboard = {}\n"
+    initialString += blackboard.initialize()
     file.write(initialString)
-
-
-def translateBlackboard(blackboard, file):
-    file.write(blackboard.translate())
 
 
 def translateNodeFunction(node, file):
@@ -32,33 +32,32 @@ def translateNodeFunction(node, file):
             # composite node
             if child._childComposite is not None:
                 translateNodeFunction(child._childComposite, file)
-                transString = child._childComposite.translate()
-                file.write(transString)
+                # transString = child._childComposite.translate()
+                # file.write(transString)
 
     # service node
     if node._services is not None:
         for service in node._services:
             transString = service.translate()
             file.write(transString)
-    
+
     # node self
     transString = node.translate()
     file.write(transString)
 
 
 def translateBTBegin(file):
-    file.write("def RunPyBehaviorTree():\n")
+    file.write("\tdef Run(self):\n")
 
 
 def translateRoot(compositeNode, file):
-    transString = "\t" + compositeNode._name + "()"
+    transString = "\t\tself." + compositeNode._name + "()"
     file.write(transString)
 
 
-def translateBehaviorTree(behaviorTree):
+def translateBehaviorTree(behaviorTree: behaviorTreeType.BehaviorTree):
     file = open("myPyBehaviorTree.py", "w")
-    initialize(file)
-    translateBlackboard(behaviorTree._blackboard, file)
+    initialize(file, behaviorTree._blackboard)
     translateNodeFunction(behaviorTree._root, file)
     translateBTBegin(file)
     translateRoot(behaviorTree._root, file)

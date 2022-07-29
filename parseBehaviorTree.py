@@ -1,6 +1,7 @@
 import propertyType
 import behaviorTreeType
 
+
 def parseBlackboard(blackboard):
     keys = []
     for entry in blackboard["Keys"]:
@@ -13,6 +14,7 @@ def parseBlackboard(blackboard):
         keys.append(insertEntry)
     return behaviorTreeType.Blackboard(keys)
 
+
 def parseTaskProperty(property, _type):
     if _type == "Blueprint":
         return None
@@ -20,21 +22,17 @@ def parseTaskProperty(property, _type):
         parseProperty = propertyType.TaskMoveToProperty(
             property["AcceptableRadius"], property["BlackboardKey"])
     if _type == "MakeNoise":
-        parseProperty = propertyType.TaskMakeNoiseProperty(
-            property["Loudnes"])
+        parseProperty = propertyType.TaskMakeNoiseProperty(property["Loudnes"])
     if _type == "MoveDirectlyToward":
         parseProperty = propertyType.TaskMoveDirectlyTowardProperty(
             property["AcceptableRadius"], property["BlackboardKey"])
     if _type == "PlayAnimation":
         parseProperty = propertyType.TaskPlayAnimationProperty(
-            property["Animation"], property["Loop"],
-            property["Block"])
+            property["Animation"], property["Loop"], property["Block"])
     if _type == "PlaySound":
-        parseProperty = propertyType.TaskPlaySoundProperty(
-            property["Sound"])
+        parseProperty = propertyType.TaskPlaySoundProperty(property["Sound"])
     if _type == "PushPawnAction":
-        parseProperty = propertyType.TaskPushPawnAction(
-            property["Action"])
+        parseProperty = propertyType.TaskPushPawnAction(property["Action"])
     if _type == "RotateToFaceBBEntry":
         parseProperty = propertyType.TaskRotateToFaceBBEntryProperty(
             property["Precision"], property["BlackboardKey"])
@@ -64,7 +62,8 @@ def parseTaskNode(taskNode, blackboard):
     taskName = taskNode["Name"]
     taskType = taskNode["Type"]
     taskProperty = parseTaskProperty(taskNode["Property"], taskType)
-    newTaskNode = behaviorTreeType.TaskNode(taskName, taskType, taskProperty, blackboard)
+    newTaskNode = behaviorTreeType.TaskNode(taskName, taskType, taskProperty,
+                                            blackboard)
     return newTaskNode
 
 
@@ -77,8 +76,8 @@ def parseDecoratorProperty(property, _type):
             property["StringValue"])
     if _type == "CheckGameplayTagsOnActor":
         parseProperty = propertyType.DecoratorCheckGameplayTagsProperty(
-            property["ActorToCheck"], property["TagsToMatch"], property["tags"]
-        )
+            property["ActorToCheck"], property["TagsToMatch"],
+            property["tags"])
     if _type == "CompareBBEntries":
         parseProperty = propertyType.DecoratorCompareBBEntryProperty(
             property["BlackboardKeyA"], property["BlackboardKeyB"],
@@ -129,8 +128,7 @@ def parseDecoratorProperty(property, _type):
     if _type == "TagCooldown":
         parseProperty = propertyType.DecoratorTagCooldownProperty(
             property["CooldownTag"], property["CooldownDuration"],
-            property["AddToExistingDuration"],
-            property["ActivatesCooldown"])
+            property["AddToExistingDuration"], property["ActivatesCooldown"])
     if _type == "Blueprint":
         return None
     return parseProperty
@@ -141,8 +139,8 @@ def parseDecorator(decoratorNodes, blackboard):
     for decoratorNode in decoratorNodes:
         decoratorName = decoratorNode["Name"]
         decoratorType = decoratorNode["Type"]
-        decoratorProperty = parseDecoratorProperty(
-            decoratorNode["Property"], decoratorType)
+        decoratorProperty = parseDecoratorProperty(decoratorNode["Property"],
+                                                   decoratorType)
         newDecoratorNode = behaviorTreeType.DecoratorNode(
             decoratorName, decoratorType, decoratorProperty, blackboard)
         decoratorNodeList.append(newDecoratorNode)
@@ -152,8 +150,8 @@ def parseDecorator(decoratorNodes, blackboard):
 def parseDecoratorOp(decoratorOp):
     decoratorOpList = []
     for op in decoratorOp:
-        newDecoratorOp = behaviorTreeType.DecoratorOps(
-            op["Operation"], op["Number"])
+        newDecoratorOp = behaviorTreeType.DecoratorOps(op["Operation"],
+                                                       op["Number"])
         decoratorOpList.append(newDecoratorOp)
     return decoratorOpList
 
@@ -187,7 +185,8 @@ def parseCompositeNode(compositeNode, blackboard):
         childDecorator = None
         childDecoratorOp = None
         if child["ChildComposite"] is not None:
-            childComposite = parseCompositeNode(child["ChildComposite"], blackboard)
+            childComposite = parseCompositeNode(child["ChildComposite"],
+                                                blackboard)
         if child["ChildTask"] is not None:
             childTask = parseTaskNode(child["ChildTask"], blackboard)
         if child["Decorators"] is not None:
@@ -200,12 +199,14 @@ def parseCompositeNode(compositeNode, blackboard):
     parseServices = []
     if compositeServices is not None:
         for service in compositeServices:
-            serviceProperty = parseServiceProperty(
-                service["Property"], service["Type"])
-            newService = behaviorTreeType.ServicesNode(
-                service["Name"], service["Type"], serviceProperty)
+            serviceProperty = parseServiceProperty(service["Property"],
+                                                   service["Type"])
+            newService = behaviorTreeType.ServicesNode(service["Name"],
+                                                       service["Type"],
+                                                       serviceProperty)
             parseServices.append(newService)
-    newComposite = behaviorTreeType.CompositeNode(
-        compositeName, compositeType, parseChildren, parseServices,
-        compositeFinishMode, blackboard)
+    newComposite = behaviorTreeType.CompositeNode(compositeName, compositeType,
+                                                  parseChildren, parseServices,
+                                                  compositeFinishMode,
+                                                  blackboard)
     return newComposite

@@ -1,58 +1,51 @@
-import threading
 import ue
 
-serviceList = []
 
-Blackboard = {}
-Blackboard["SelfActor"] = None
-Blackboard["Print"] = False
+class MyBehaviorTree:
+    def __init__(self, robot):
+        self.robot = robot
+        self.servicesList = []
+        self.blackboard = {}
+        self.blackboard["SelfActor"] = None
+        self.blackboard["Print"] = False
 
-def printFirst_C_0():
-	print("First print String")
+    def printFirst_C_0(self):
+        print("First print String")
+        return True
 
-def BTDecorator_Blackboard_1():
-	if not Blackboard["Print"]:
-		return True
-	return False
+    def BTDecorator_Blackboard_1(self):
+        if not self.blackboard["Print"]:
+            return True
+        return False
 
-def printSecond_C_0():
-	print("Second print String!!!!!!!!!")
+    def printSecond_C_0(self):
+        print("Second print String!!!!!!!!!")
+        return True
 
-def BTDecorator_Blackboard_2():
-	if Blackboard["Print"]:
-		return True
-	return False
+    def BTDecorator_Blackboard_2(self):
+        if self.blackboard["Print"]:
+            return True
+        return False
 
-def BTComposite_Selector_0():
-	if BTDecorator_Blackboard_1():
-		if printFirst_C_0():
-			return True
-	if BTDecorator_Blackboard_2():
-		if printSecond_C_0():
-			return True
-		return False
+    def BTComposite_Selector_0(self):
+        if self.BTDecorator_Blackboard_1():
+            if self.printFirst_C_0():
+                return True
+        if self.BTDecorator_Blackboard_2():
+            if self.printSecond_C_0():
+                return True
+        return False
 
+    def changeBlackboard_C_0(self):
+        self.blackboard["Print"] = not self.blackboard["Print"]
+        return True
 
-def BTComposite_Selector_0():
-	if BTDecorator_Blackboard_1():
-		if printFirst_C_0():
-			return True
-	if BTDecorator_Blackboard_2():
-		if printSecond_C_0():
-			return True
-		return False
+    def BTComposite_Sequence_0(self):
+        if self.BTComposite_Selector_0() is False:
+            return False
+        if self.changeBlackboard_C_0() is False:
+            return False
+        return True
 
-
-def changeBlackboard_C_0():
-	Blackboard["Print"] = not Blackboard["Print"]
-
-def BTComposite_Sequence_0():
-	if BTComposite_Selector_0() is False:
-		return False
-	if changeBlackboard_C_0() is False:
-		return False
-	return True
-
-
-def RunPyBehaviorTree():
-	BTComposite_Sequence_0()
+    def Run(self):
+        self.BTComposite_Sequence_0()
