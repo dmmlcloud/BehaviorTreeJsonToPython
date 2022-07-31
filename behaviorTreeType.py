@@ -61,10 +61,10 @@ class CompositeNode:
         self._services = _services
         self._finishMode = _finishMode
         self._blackboard = _blackboard
-
+        
     def translate(self):
         # translate node to function, use node name as function's name
-        transString = "\tdef " + self._name + "(self):\n"
+        transString = "\tdef " + self._name + "(self, exePending):\n"
         indent = "\t\t"
         # first begin service
         if self._services is not None:
@@ -78,56 +78,112 @@ class CompositeNode:
         # depends on different composite type
         # selector
         if self._type == "Selector":
-            if self._children is not None:
-                for child in self._children:
-                    # if have decorator, call function and judge from the
-                    # result of the decorator function
-                    indent = "\t\t"
-                    if child._decorators is not None:
-                        transString += indent + "if "
-                        for i, decorator in enumerate(child._decorators):
-                            transString += "self." + decorator._name + "()"
-                            if i != len(child._decorators) - 1:
-                                transString += " && "
-                            else:
-                                transString += ":\n"
-                        indent += "\t"
-                    # call children nodes
-                    if child._childComposite is not None:
-                        transString += indent + "if self." + \
-                            child._childComposite._name + "():\n" + \
-                            indent + "\treturn True\n"
-                    if child._childTask is not None:
-                        transString += indent + "if self." + \
-                            child._childTask._name + "():\n" + indent + \
-                            "\treturn True\n"
-                indent = "\t\t"
-                transString += indent + "return False\n"
+            transString += indent + "for _ in range(len(exePending)):\n"
+            indent = "\t\t\t"
+            transString += indent + "exe = exePending[0]\n"
+            transString += indent + "if len(exe.decorators) != 0:\n"
+            indent = "\t\t\t\t"
+            transString += indent + "for decorator in exe.decorators:\n"
+            indent = "\t\t\t\t\t"
+            transString += indent + "if not decorator():\n"
+            indent = "\t\t\t\t\t\t"
+            transString += indent + "return False, False\n"
+            indent = "\t\t\t"
+            transString += indent + "if exe.task != None:\n"
+            indent = "\t\t\t\t"
+            transString += indent + "result, isRunning = exe.task.Run()\n"
+            indent = "\t\t\t"
+            transString += indent + "if exe.composite != None:\n"
+            indent = "\t\t\t\t"
+            transString += indent + "result, isRunning = exe.composite.Run()\n"
+            indent = "\t\t\t"
+            transString += indent + "if result:\n"
+            indent = "\t\t\t\t"
+            transString += indent + "return result, isRunning\n"
+            indent = "\t\t\t"
+            transString += indent + "exePending.pop(0)\n"
+            indent = "\t\t"
+            transString += indent + "return False, False\n"
+            # if self._children is not None:
+            #     for child in self._children:
+            #         # if have decorator, call function and judge from the
+            #         # result of the decorator function
+            #         indent = "\t\t"
+            #         if child._decorators is not None:
+            #             transString += indent + "if "
+            #             for i, decorator in enumerate(child._decorators):
+            #                 transString += "self." + decorator._name + "()"
+            #                 if i != len(child._decorators) - 1:
+            #                     transString += " && "
+            #                 else:
+            #                     transString += ":\n"
+            #             indent += "\t"
+            #         # call children nodes
+            #         if child._childComposite is not None:
+            #             transString += indent + "if self." + \
+            #                 child._childComposite._name + "():\n" + \
+            #                 indent + "\treturn True\n"
+            #         if child._childTask is not None:
+            #             transString += indent + "if self." + \
+            #                 child._childTask._name + "():\n" + indent + \
+            #                 "\treturn True\n"
+            #     indent = "\t\t"
+            #     transString += indent + "return False\n"
         # sequence
         if self._type == "Sequence":
-            if self._children is not None:
-                for child in self._children:
-                    indent = "\t\t"
-                    if child._decorators is not None:
-                        transString += indent + "if "
-                        for i, decorator in enumerate(child._decorators):
-                            transString += "self." + decorator._name + "()"
-                            if i != len(child._decorators) - 1:
-                                transString += " && "
-                            else:
-                                transString += ":\n"
-                        indent += "\t"
-                    # call children nodes
-                    if child._childComposite is not None:
-                        transString += indent + "if self." + \
-                            child._childComposite._name + "() is False:\n" + \
-                            indent + "\treturn False\n"
-                    if child._childTask is not None:
-                        transString += indent + "if self." + \
-                            child._childTask._name + "() is False:\n" + \
-                            indent + "\treturn False\n"
-                indent = "\t\t"
-                transString += indent + "return True\n"
+            transString += indent + "for _ in range(len(exePending)):\n"
+            indent = "\t\t\t"
+            transString += indent + "exe = exePending[0]\n"
+            transString += indent + "if len(exe.decorators) != 0:\n"
+            indent = "\t\t\t\t"
+            transString += indent + "for decorator in exe.decorators:\n"
+            indent = "\t\t\t\t\t"
+            transString += indent + "if not decorator():\n"
+            indent = "\t\t\t\t\t\t"
+            transString += indent + "return False, False\n"
+            indent = "\t\t\t"
+            transString += indent + "if exe.task != None:\n"
+            indent = "\t\t\t\t"
+            transString += indent + "result, isRunning = exe.task.Run()\n"
+            indent = "\t\t\t"
+            transString += indent + "if exe.composite != None:\n"
+            indent = "\t\t\t\t"
+            transString += indent + "result, isRunning = exe.composite.Run()\n"
+            indent = "\t\t\t"
+            transString += indent + "if not result:\n"
+            indent = "\t\t\t\t"
+            transString += indent + "return False, False\n"
+            indent = "\t\t\t"
+            transString += indent + "if isRunning:\n"
+            indent = "\t\t\t\t"
+            transString += indent + "return True, True\n"
+            indent = "\t\t\t"
+            transString += indent + "exePending.pop(0)\n"
+            indent = "\t\t"
+            transString += indent + "return True, False\n"
+            # if self._children is not None:
+            #     for child in self._children:
+            #         indent = "\t\t"
+            #         if child._decorators is not None:
+            #             transString += indent + "if "
+            #             for i, decorator in enumerate(child._decorators):
+            #                 transString += "self." + decorator._name + "()"
+            #                 if i != len(child._decorators) - 1:
+            #                     transString += " && "
+            #                 else:
+            #                     transString += ":\n"
+            #             indent += "\t"
+            #         # call children nodes
+            #         if child._childComposite is not None:
+            #             transString += indent + "if self." + \
+            #                 child._childComposite._name + "() is False:\n" + \
+            #                 indent + "\treturn False\n"
+            #         if child._childTask is not None:
+            #             transString += indent + "if self." + \
+            #                 child._childTask._name + "() is False:\n" + \
+            #                 indent + "\treturn False\n"
+            #     indent = "\t\t"
+            #     transString += indent + "return True\n"
         # parallel
         secondTask = False
         if self._type == "SimpleParallel":
@@ -178,7 +234,7 @@ class ChildNode:
 
 
 class TaskNode:
-    def __init__(self, _name, _type, _property, _blackboard, _func):
+    def __init__(self, _name, _type, _property, _blackboard):
         self._name = _name
         self._type = _type
         self._property = _property
@@ -232,20 +288,20 @@ class TaskNode:
         transString += indent + "normalVector = (targetLocation - nowLocation).GetSafeNormal()\n"
         transString += indent + "robotMovement = self.GetMovementComponent()\n"
         transString += indent + "robotMovement.AddInputVector(normalVector, False)\n"
-
+        transString += indent + "return True, True\n"
         return transString
 
     def translateBlueprint(self):
         transString = ""
         indent = "\t\t"
         # for test
-        # if "printFirst" in self._name:
-        #     transString += indent + "print(\"First print String\")\n"
-        # if "printSecond" in self._name:
-        #     transString += indent + "print(\"Second print String!!!!!!!!!\")\n"
-        # if "changeBlackboard" in self._name:
-        #     transString += indent + "self.blackboard[\"Print\"] = " + \
-        #         "not self.blackboard[\"Print\"]\n"
+        if "printFirst" in self._name:
+            transString += indent + "print(\"First print String\")\n"
+        if "printSecond" in self._name:
+            transString += indent + "print(\"Second print String!!!!!!!!!\")\n"
+        if "changeBlackboard" in self._name:
+            transString += indent + "self.blackboard[\"Print\"] = " + \
+                "not self.blackboard[\"Print\"]\n"
 
         # for move Task
         if "change_speed" in self._name:
@@ -255,7 +311,7 @@ class TaskNode:
             #todo: use findfloor.bwalkablefloor
             transString += indent + "blackboard[\"" + self._property.blackboardKey + "\"] = " + \
                 "ue."
-        transString += indent + "return True\n\n"
+        transString += indent + "return True, False\n\n"
         return transString
 
 
