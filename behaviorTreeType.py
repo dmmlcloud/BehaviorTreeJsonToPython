@@ -13,10 +13,9 @@ class Blackboard:
         self._keys = _keys
 
     def initialize(self):
-        indent = "\t\t"
         blackboardStr = ""
         for key in self._keys:
-            blackboardStr += indent + "self.blackboard[\"" + \
+            blackboardStr += "blackboard[\"" + \
                  key._name + "\"] = "
             if key._type == "Bool":
                 blackboardStr += "False\n"
@@ -61,7 +60,7 @@ class CompositeNode:
         self._services = _services
         self._finishMode = _finishMode
         self._blackboard = _blackboard
-        
+
     def translate(self):
         # translate node to function, use node name as function's name
         transString = "\tdef " + self._name + "(self, exePending):\n"
@@ -81,19 +80,26 @@ class CompositeNode:
             transString += indent + "for _ in range(len(exePending)):\n"
             indent = "\t\t\t"
             transString += indent + "exe = exePending[0]\n"
+            transString += indent + "flag = True\n"
             transString += indent + "if len(exe.decorators) != 0:\n"
             indent = "\t\t\t\t"
             transString += indent + "for decorator in exe.decorators:\n"
             indent = "\t\t\t\t\t"
             transString += indent + "if not decorator():\n"
             indent = "\t\t\t\t\t\t"
-            transString += indent + "return False, False\n"
+            transString += indent + "exePending.pop(0)\n"
+            transString += indent + "flag = False\n"
+            transString += indent + "break\n"
+            indent = "\t\t\t\t"
+            transString += indent + "if not flag:\n"
+            indent = "\t\t\t\t\t"
+            transString += indent + "continue\n"
             indent = "\t\t\t"
-            transString += indent + "if exe.task != None:\n"
+            transString += indent + "if exe.task is not None:\n"
             indent = "\t\t\t\t"
             transString += indent + "result, isRunning = exe.task.Run()\n"
             indent = "\t\t\t"
-            transString += indent + "if exe.composite != None:\n"
+            transString += indent + "if exe.composite is not None:\n"
             indent = "\t\t\t\t"
             transString += indent + "result, isRunning = exe.composite.Run()\n"
             indent = "\t\t\t"
@@ -142,11 +148,11 @@ class CompositeNode:
             indent = "\t\t\t\t\t\t"
             transString += indent + "return False, False\n"
             indent = "\t\t\t"
-            transString += indent + "if exe.task != None:\n"
+            transString += indent + "if exe.task is not None:\n"
             indent = "\t\t\t\t"
             transString += indent + "result, isRunning = exe.task.Run()\n"
             indent = "\t\t\t"
-            transString += indent + "if exe.composite != None:\n"
+            transString += indent + "if exe.composite is not None:\n"
             indent = "\t\t\t\t"
             transString += indent + "result, isRunning = exe.composite.Run()\n"
             indent = "\t\t\t"
@@ -300,15 +306,15 @@ class TaskNode:
         if "printSecond" in self._name:
             transString += indent + "print(\"Second print String!!!!!!!!!\")\n"
         if "changeBlackboard" in self._name:
-            transString += indent + "self.blackboard[\"Print\"] = " + \
-                "not self.blackboard[\"Print\"]\n"
+            transString += indent + "blackboard[\"Print\"] = " + \
+                "not blackboard[\"Print\"]\n"
 
         # for move Task
         if "change_speed" in self._name:
             transString += indent + "robotMovement = self.robot.GetMovementComponent()\n"
             transString += indent + "robotMove.MaxWalkSpeed = \n"
         if "move_random" in self._name:
-            #todo: use findfloor.bwalkablefloor
+            # todo: use findfloor.bwalkablefloor
             transString += indent + "blackboard[\"" + self._property.blackboardKey + "\"] = " + \
                 "ue."
         transString += indent + "return True, False\n\n"
@@ -381,10 +387,10 @@ class DecoratorNode:
            valueType == "Object" or valueType == "Rotator" or \
            valueType == "Vector":
             if self._property.opsType == "NotSet":
-                transString += indent + "if not self.blackboard[\"" + \
+                transString += indent + "if not blackboard[\"" + \
                     self._property.blackboardKey + "\"]:\n"
             if self._property.opsType == "Set":
-                transString += indent + "if self.blackboard[\"" + \
+                transString += indent + "if blackboard[\"" + \
                     self._property.blackboardKey + "\"]:\n"
         if valueType == "Int" or valueType == "Float":
             if valueType == "Int":
@@ -392,45 +398,45 @@ class DecoratorNode:
             else:
                 keyValue = self._property.floatValue
             if self._property.opsType == "Equal":
-                transString += indent + "if self.blackboard[\"" + \
+                transString += indent + "if blackboard[\"" + \
                     self._property.blackboardKey + "\"] = " + \
                     keyValue + ":\n"
             if self._property.opsType == "NotEqual":
-                transString += indent + "if self.blackboard[\"" + \
+                transString += indent + "if blackboard[\"" + \
                     self._property.blackboardKey + "\"] != " + \
                     keyValue + ":\n"
             if self._property.opsType == "Less":
-                transString += indent + "if self.blackboard[\"" + \
+                transString += indent + "if blackboard[\"" + \
                     self._property.blackboardKey + "\"] < " + \
                     keyValue + ":\n"
             if self._property.opsType == "LessOrEqual":
-                transString += indent + "if self.blackboard[\"" + \
+                transString += indent + "if blackboard[\"" + \
                     self._property.blackboardKey + "\"] <= " + \
                     keyValue + ":\n"
             if self._property.opsType == "Greater":
-                transString += indent + "if self.blackboard[\"" + \
+                transString += indent + "if blackboard[\"" + \
                     self._property.blackboardKey + "\"] > " + \
                     keyValue + ":\n"
             if self._property.opsType == "GreaterOrEqual":
-                transString += indent + "if self.blackboard[\"" + \
+                transString += indent + "if blackboard[\"" + \
                     self._property.blackboardKey + "\"] >= " + \
                     keyValue + ":\n"
         if valueType == "String" or valueType == "Name":
             if self._property.opsType == "Equal":
-                transString += indent + "if self.blackboard[\"" + \
+                transString += indent + "if blackboard[\"" + \
                     self._property.blackboardKey + "\"] = \"" + \
                     self._property.stringValue + "\":\n"
             if self._property.opsType == "NotEqual":
-                transString += indent + "if self.blackboard[\"" + \
+                transString += indent + "if blackboard[\"" + \
                     self._property.blackboardKey + "\"] != \"" + \
                     self._property.stringValue + "\":\n"
             if self._property.opsType == "Contain":
                 transString += indent + "if \"" + self._property.stringValue \
-                    + "\" in self.blackboard[\"" + self._property.blackboardKey \
+                    + "\" in blackboard[\"" + self._property.blackboardKey \
                     + "\"]:\n"
             if self._property.opsType == "NotContain":
                 transString += indent + "if \"" + self._property.stringValue \
-                    + "\" not in self.blackboard[\"" + self._property.blackboardKey\
+                    + "\" not in blackboard[\"" + self._property.blackboardKey\
                     + "\"]:\n"
         transString += indent + "\treturn True\n"
         transString += indent + "return False\n\n"

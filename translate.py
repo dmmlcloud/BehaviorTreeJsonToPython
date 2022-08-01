@@ -2,6 +2,7 @@ import json
 import behaviorTreeType
 import parseBehaviorTree
 
+
 def initializeChildNode():
     initialString = ""
     initialString += "class ChildNode:\n"
@@ -10,6 +11,7 @@ def initializeChildNode():
     initialString += "\t\tself.task = task\n"
     initialString += "\t\tself.decorator = decorator\n\n"
     return initialString
+
 
 def initializeCompositeNode():
     initialString = ""
@@ -20,12 +22,13 @@ def initializeCompositeNode():
     initialString += "\t\tself.exePending = []\n\n"
     initialString += "\tdef Run(self):\n"
     initialString += "\t\tif len(self.exePending) == 0:\n"
-    initialString += "\t\t\tself.exePending = self.children.copy()\n"
+    initialString += "\t\t\tself.exePending = list(self.children)\n"
     initialString += "\t\tresult, isRunning = self.func(self.exePending)\n"
     initialString += "\t\tif not isRunning:\n"
-    initialString += "\t\t\tself.exePending.clear()\n"
+    initialString += "\t\t\tself.exePending = []\n"
     initialString += "\t\treturn result, isRunning\n\n"
     return initialString
+
 
 def initializeTaskNode():
     initialString = ""
@@ -37,6 +40,7 @@ def initializeTaskNode():
     initialString += "\t\treturn result, isRunning\n\n"
     return initialString
 
+
 def initializeNodeClass():
     initialString = ""
     initialString += initializeChildNode()
@@ -44,16 +48,19 @@ def initializeNodeClass():
     initialString += initializeTaskNode()
     return initialString
 
+
 def initialize(file, blackboard: behaviorTreeType.Blackboard):
     initialString = "import ue\n\n"
     initialString += initializeNodeClass()
+
+    initialString += "blackboard = {}\n"
+    initialString += blackboard.initialize()
+
     initialString += "class MyBehaviorTree:\n"
     initialString += "\tdef __init__(self, robot):\n"
     initialString += "\t\tself.root = None\n"
     initialString += "\t\tself.robot = robot\n"
     initialString += "\t\tself.servicesList = []\n"
-    initialString += "\t\tself.blackboard = {}\n"
-    initialString += blackboard.initialize()
     file.write(initialString)
 
 
@@ -61,7 +68,7 @@ def CreateNode(node, createNodeString, file):
     header = "\tdef Create(self):\n" + createNodeString
     header += "\t\tself.root = CompositeNode(self." + node._name + ", children_0)\n"
     file.write(header + "\n\n")
-    
+
 
 def translateNodeFunction(node, file, num):
     if node is None:
@@ -77,7 +84,8 @@ def translateNodeFunction(node, file, num):
             if child._childTask is not None:
                 transString = child._childTask.translate()
                 file.write(transString)
-                createNodeString += "\t\ttask_" + str(no) + " = TaskNode(self." + child._childTask._name + ")\n"
+                createNodeString += "\t\ttask_" + str(
+                    no) + " = TaskNode(self." + child._childTask._name + ")\n"
             else:
                 createNodeString += "\t\ttask_" + str(no) + " = None\n"
             # decorator node
@@ -86,12 +94,14 @@ def translateNodeFunction(node, file, num):
                 for decorator in child._decorators:
                     transString = decorator.translate()
                     file.write(transString)
-                    createNodeString += "\t\tdecorators_" + str(no) + ".append(self." +decorator._name + ")\n"
+                    createNodeString += "\t\tdecorators_" + str(
+                        no) + ".append(self." + decorator._name + ")\n"
             else:
                 createNodeString += "\t\tdecorators_" + str(no) + " = None\n"
             # composite node
             if child._childComposite is not None:
-                appnedString, childNo = translateNodeFunction(child._childComposite, file, num)
+                appnedString, childNo = translateNodeFunction(
+                    child._childComposite, file, num)
                 createNodeString += appnedString
                 createNodeString += "\t\tcomposite_" + str(no) + " = CompositeNode(self." + child._childComposite._name + \
                                 ", children_" + str(childNo) + ")\n"
@@ -99,7 +109,8 @@ def translateNodeFunction(node, file, num):
                 createNodeString += "\t\tcomposite_" + str(no) + " = None\n"
             createNodeString += "\t\tchildNode_" + str(no) + " = ChildNode(composite_"\
                              + str(no) + ", task_" + str(no) + ", decorators_" + str(no) + ")\n"
-            createNodeString += "\t\tchildren_" + str(no) + ".append(" + "childNode_" + str(no) + ")\n"
+            createNodeString += "\t\tchildren_" + str(
+                no) + ".append(" + "childNode_" + str(no) + ")\n"
     # service node
     if node._services is not None:
         for service in node._services:
