@@ -6,10 +6,10 @@ import parseBehaviorTree
 def initializeChildNode():
     initialString = ""
     initialString += "class ChildNode:\n"
-    initialString += "\tdef __init__(self, composite, task, decorator):\n"
+    initialString += "\tdef __init__(self, composite, task, decorators):\n"
     initialString += "\t\tself.composite = composite\n"
     initialString += "\t\tself.task = task\n"
-    initialString += "\t\tself.decorator = decorator\n\n"
+    initialString += "\t\tself.decorators = decorators\n\n"
     return initialString
 
 
@@ -36,7 +36,7 @@ def initializeTaskNode():
     initialString += "\tdef __init__(self, func):\n"
     initialString += "\t\tself.func = func\n\n"
     initialString += "\tdef Run(self):\n"
-    initialString += "\t\tresult, isRunning = self.func(self.exePending)\n"
+    initialString += "\t\tresult, isRunning = self.func()\n"
     initialString += "\t\treturn result, isRunning\n\n"
     return initialString
 
@@ -49,7 +49,7 @@ def initializeNodeClass():
     return initialString
 
 
-def initialize(file, blackboard: behaviorTreeType.Blackboard):
+def initialize(file, blackboard):
     initialString = "import ue\n\n"
     initialString += initializeNodeClass()
 
@@ -57,10 +57,11 @@ def initialize(file, blackboard: behaviorTreeType.Blackboard):
     initialString += blackboard.initialize()
 
     initialString += "class MyBehaviorTree:\n"
-    initialString += "\tdef __init__(self, robot):\n"
+    initialString += "\tdef __init__(self, robot, playerController):\n"
     initialString += "\t\tself.root = None\n"
     initialString += "\t\tself.robot = robot\n"
     initialString += "\t\tself.servicesList = []\n"
+    initialString += "\t\tself.playerController = playerController\n\n"
     file.write(initialString)
 
 
@@ -128,11 +129,13 @@ def translateBTBegin(file):
 
 
 def translateRoot(compositeNode, file):
-    transString = "\t\tself.root.Run()"
+    transString = "\t\tself.root.Run()\n"
+    transString += "\t\tblackboard[\"State\"] = 0\n"
+    
     file.write(transString)
 
 
-def translateBehaviorTree(behaviorTree: behaviorTreeType.BehaviorTree):
+def translateBehaviorTree(behaviorTree):
     file = open("myPyBehaviorTree.py", "w")
     initialize(file, behaviorTree._blackboard)
     createNodeString, _ = translateNodeFunction(behaviorTree._root, file, 0)
@@ -143,7 +146,7 @@ def translateBehaviorTree(behaviorTree: behaviorTreeType.BehaviorTree):
 
 
 if __name__ == "__main__":
-    BTAsset = open("temp.json", "r", encoding="utf-8")
+    BTAsset = open("temp.json", "r")
     bt = json.load(BTAsset)
     # first parse last construct
     # parse behaviorTree

@@ -1,5 +1,5 @@
 {
-	"Name": "printBehavior",
+	"Name": "MyAIBehavior",
 	"Blackboard": 
 	{
 		"Keys": [
@@ -9,91 +9,161 @@
 				"BaseClass": "Actor"
 			},
 			{
-				"Name": "Print",
-				"Type": "Bool"
+				"Name": "TargetActor",
+				"Type": "Object",
+				"BaseClass": "Actor"
+			},
+			{
+				"Name": "State",
+				"Type": "Enum",
+				"EnumType": "MyAIStateEnum"
+			},
+			{
+				"Name": "RandomPos",
+				"Type": "Vector"
 			}
 		]
 	},
 	"Root": 
 	{
-		"Name": "BTComposite_Sequence_0",
-		"Type": "Sequence",
+		"Name": "BTComposite_Selector_0",
+		"Type": "Selector",
 		"FinishMode": "null",
 		"Children": [
 			{
 				"ChildComposite": 
 				{
-					"Name": "BTComposite_Selector_0",
-					"Type": "Selector",
+					"Name": "BTComposite_Sequence_3",
+					"Type": "Sequence",
 					"FinishMode": "null",
 					"Children": [
 						{
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "printFirst_C_0",
+								"Name": "ChangeMoveSpeed_C_2",
 								"Type": "Blueprint",
-								"Property": null
+								"Property": 
+								{
+									"Speed": "200.000000"
+								}
 							},
 							"DecoratorOps": null,
-							"Decorators": [
-								{
-									"Name": "BTDecorator_Blackboard_1",
-									"Type": "Blackboard",
-									"Property": 
-									{
-										"BlackboardKey": "Print",
-										"OpsType": "NotSet",
-										"IntValue": "0",
-										"FloatValue": "0.000000",
-										"StringValue": ""
-									}
-								}
-							]
+							"Decorators": null
 						},
 						{
 							"ChildComposite": null,
 							"ChildTask": 
 							{
-								"Name": "printSecond_C_0",
+								"Name": "MoveToRandomPos_C_0",
 								"Type": "Blueprint",
 								"Property": null
 							},
 							"DecoratorOps": null,
-							"Decorators": [
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_MoveTo_1",
+								"Type": "MoveTo",
+								"Property": 
 								{
-									"Name": "BTDecorator_Blackboard_2",
-									"Type": "Blackboard",
-									"Property": 
-									{
-										"BlackboardKey": "Print",
-										"OpsType": "Set",
-										"IntValue": "0",
-										"FloatValue": "0.000000",
-										"StringValue": ""
-									}
+									"AcceptableRadius": "5.000000",
+									"BlackboardKey": "RandomPos"
 								}
-							]
+							},
+							"DecoratorOps": null,
+							"Decorators": null
 						}
 					],
 					"Services": null
 				},
 				"ChildTask": null,
 				"DecoratorOps": null,
-				"Decorators": null
+				"Decorators": [
+					{
+						"Name": "BTDecorator_Blackboard_4",
+						"Type": "Blackboard",
+						"Property": 
+						{
+							"BlackboardKey": "State",
+							"OpsType": "Equal",
+							"IntValue": "0",
+							"FloatValue": "0.000000",
+							"StringValue": ""
+						}
+					}
+				]
 			},
 			{
-				"ChildComposite": null,
-				"ChildTask": 
+				"ChildComposite": 
 				{
-					"Name": "changeBlackboard_C_0",
-					"Type": "Blueprint",
-					"Property": null
+					"Name": "BTComposite_Sequence_1",
+					"Type": "Sequence",
+					"FinishMode": "null",
+					"Children": [
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "ChangeMoveSpeed_C_1",
+								"Type": "Blueprint",
+								"Property": 
+								{
+									"Speed": "300.000000"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						},
+						{
+							"ChildComposite": null,
+							"ChildTask": 
+							{
+								"Name": "BTTask_MoveTo_0",
+								"Type": "MoveTo",
+								"Property": 
+								{
+									"AcceptableRadius": "5.000000",
+									"BlackboardKey": "TargetActor"
+								}
+							},
+							"DecoratorOps": null,
+							"Decorators": null
+						}
+					],
+					"Services": null
 				},
+				"ChildTask": null,
 				"DecoratorOps": null,
-				"Decorators": null
+				"Decorators": [
+					{
+						"Name": "BTDecorator_Blackboard_0",
+						"Type": "Blackboard",
+						"Property": 
+						{
+							"BlackboardKey": "State",
+							"OpsType": "Equal",
+							"IntValue": "1",
+							"FloatValue": "0.000000",
+							"StringValue": ""
+						}
+					}
+				]
 			}
 		],
-		"Services": null
+		"Services": [
+			{
+				"Name": "CheckIfAISeePlayer_C_0",
+				"Type": "Blueprint",
+				"Property": 
+				{
+					"Interval": "0.500000",
+					"RandomDeviation": "0.100000"
+				}
+			}
+		]
 	}
 }

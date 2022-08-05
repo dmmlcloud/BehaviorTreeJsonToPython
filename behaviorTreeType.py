@@ -68,12 +68,7 @@ class CompositeNode:
         # first begin service
         if self._services is not None:
             for service in self._services:
-                transString = indent + \
-                    "serviceThread = threading.Thread(target=" + \
-                    service._name + ")\n"
-                transString += indent + \
-                    "serviceList.append(serviceThread)\n"
-                # todo: where start and join
+                transString += indent + "self." + service._name + "()\n"
         # depends on different composite type
         # selector
         if self._type == "Selector":
@@ -81,7 +76,7 @@ class CompositeNode:
             indent = "\t\t\t"
             transString += indent + "exe = exePending[0]\n"
             transString += indent + "flag = True\n"
-            transString += indent + "if len(exe.decorators) != 0:\n"
+            transString += indent + "if exe.decorators is not None and len(exe.decorators) != 0:\n"
             indent = "\t\t\t\t"
             transString += indent + "for decorator in exe.decorators:\n"
             indent = "\t\t\t\t\t"
@@ -140,7 +135,7 @@ class CompositeNode:
             transString += indent + "for _ in range(len(exePending)):\n"
             indent = "\t\t\t"
             transString += indent + "exe = exePending[0]\n"
-            transString += indent + "if len(exe.decorators) != 0:\n"
+            transString += indent + "if exe.decorators is not None and len(exe.decorators) != 0:\n"
             indent = "\t\t\t\t"
             transString += indent + "for decorator in exe.decorators:\n"
             indent = "\t\t\t\t\t"
@@ -152,7 +147,7 @@ class CompositeNode:
             indent = "\t\t\t\t"
             transString += indent + "result, isRunning = exe.task.Run()\n"
             indent = "\t\t\t"
-            transString += indent + "if exe.composite is not None:\n"
+            transString += indent + "if exe.decorators is not None and exe.composite is not None:\n"
             indent = "\t\t\t\t"
             transString += indent + "result, isRunning = exe.composite.Run()\n"
             indent = "\t\t\t"
@@ -286,15 +281,14 @@ class TaskNode:
     def translateMoveTo(self):
         transString = ""
         indent = "\t\t"
-        transString += indent + "nowLocation = robot.GetLocation()\n"
+        transString += indent + "nowLocation = self.robot.GetActorLocation()\n"
         transString += indent + "targetLocation = blackboard[\"" + self._property.blackboardKey + "\"]\n"
-        transString += indent + "if(ue.Vector.Distance(targetLocation, nowLocation) < 10.0)\n"
-        transString += indent + "\tself.GetMovementComponent().\n"
-        transString += indent + "\treturn True\n"
+        transString += indent + "if(ue.Vector.Distance(targetLocation, nowLocation) < 100.0):\n"
+        transString += indent + "\treturn True, False\n"
         transString += indent + "normalVector = (targetLocation - nowLocation).GetSafeNormal()\n"
-        transString += indent + "robotMovement = self.GetMovementComponent()\n"
+        transString += indent + "robotMovement = self.robot.GetMovementComponent()\n"
         transString += indent + "robotMovement.AddInputVector(normalVector, False)\n"
-        transString += indent + "return True, True\n"
+        transString += indent + "return True, True\n\n"
         return transString
 
     def translateBlueprint(self):
@@ -310,20 +304,23 @@ class TaskNode:
                 "not blackboard[\"Print\"]\n"
 
         # for move Task
-        if "change_speed" in self._name:
+        if "ChangeMoveSpeed" in self._name:
             transString += indent + "robotMovement = self.robot.GetMovementComponent()\n"
-            transString += indent + "robotMove.MaxWalkSpeed = \n"
-        if "move_random" in self._name:
-            # todo: use findfloor.bwalkablefloor
-            transString += indent + "blackboard[\"" + self._property.blackboardKey + "\"] = " + \
-                "ue."
+            transString += indent + "robotMovement.MaxWalkSpeed = " + self._property.variable["Speed"] + "\n"
+        if "MoveToRandomPos" in self._name:
+            # floor = robotMovementComponent.FindFloor(randomVector)
+            transString += indent + "randomVector = ue.KismetMathLibrary.RandomPointInBoundingBox(self.robot.GetActorLocation(), ue.Vector(1000.0, 1000.0, 0.0))\n"
+            transString += indent + "floor = self.robot.GetMovementComponent().FindFloor(randomVector)\n"
+            transString += indent + "if floor is None or not floor.bWalkableFloor:\n"
+            transString += indent + "\treturn True, True\n"
+            transString += indent + "blackboard[\"RandomPos\"] = randomVector\n"
         transString += indent + "return True, False\n\n"
         return transString
 
 
 class DecoratorNode:
     def __init__(self, _name, _type,
-                 _property: propertyType.DecoratorBlackboardProperty,
+                 _property,
                  _blackboard):
         self._name = _name
         self._type = _type
@@ -392,14 +389,15 @@ class DecoratorNode:
             if self._property.opsType == "Set":
                 transString += indent + "if blackboard[\"" + \
                     self._property.blackboardKey + "\"]:\n"
-        if valueType == "Int" or valueType == "Float":
-            if valueType == "Int":
-                keyValue = self._property.intValue
-            else:
+        if valueType == "Int" or valueType == "Float" or \
+            valueType == "Enum":
+            if valueType == "Float":
                 keyValue = self._property.floatValue
+            else:
+                keyValue = self._property.intValue
             if self._property.opsType == "Equal":
                 transString += indent + "if blackboard[\"" + \
-                    self._property.blackboardKey + "\"] = " + \
+                    self._property.blackboardKey + "\"] == " + \
                     keyValue + ":\n"
             if self._property.opsType == "NotEqual":
                 transString += indent + "if blackboard[\"" + \
@@ -424,7 +422,7 @@ class DecoratorNode:
         if valueType == "String" or valueType == "Name":
             if self._property.opsType == "Equal":
                 transString += indent + "if blackboard[\"" + \
-                    self._property.blackboardKey + "\"] = \"" + \
+                    self._property.blackboardKey + "\"] == \"" + \
                     self._property.stringValue + "\":\n"
             if self._property.opsType == "NotEqual":
                 transString += indent + "if blackboard[\"" + \
@@ -465,20 +463,22 @@ class ServicesNode:
         transString = "\tdef " + self._name + "(self):\n"
         indent = "\t\t"
         if self._type == "Blueprint":
-            transString += indent + "while True:\n"
-            indent += "\t"
-            transString += indent + "print(\"blueprint service\")\n"
-            transString += indent + "sleep(" + self._property.interval\
-                + ")\n\n"
+            if "CheckIfAISeePlayer" in self._name:
+                transString += indent + "targetLocation = self.playerController.GetActorLocation()\n"
+                transString += indent + "targetLocation.Z = 0.0\n"
+                transString += indent + "robotLocation = self.robot.GetActorLocation()\n"
+                transString += indent + "robotLocation.Z = 0.0\n"
+                transString += indent + "disVector = (targetLocation - robotLocation).GetSafeNormal()\n"
+                transString += indent + "robotForward = self.robot.GetActorForwardVector()\n"
+                transString += indent + "angle = ue.KismetMathLibrary.DegAcos(ue.Vector.DotProduct(disVector, robotForward))\n"
+                transString += indent + "if angle < 20.0:\n"
+                transString += indent + "\tblackboard[\"State\"] = 1\n"
+                transString += indent + "\tblackboard[\"TargetActor\"] = targetLocation\n\n"
         if self._type == "DefaultFocus":
-            transString += indent + "while True:\n"
-            indent += "\t"
             transString += indent + "print(\"default focus\")\n"
             transString += indent + "sleep(" + self._property.interval\
                 + ")\n\n"
         if self._type == "RunEQS":
-            transString += indent + "while True:\n"
-            indent += "\t"
             transString += indent + "print(\"run EQS\")\n"
             transString += indent + "sleep(" + self._property.interval\
                 + ")\n\n"

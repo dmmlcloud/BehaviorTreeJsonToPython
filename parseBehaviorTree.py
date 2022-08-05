@@ -15,9 +15,11 @@ def parseBlackboard(blackboard):
     return behaviorTreeType.Blackboard(keys)
 
 
-def parseTaskProperty(property, _type):
+def parseTaskProperty(property, _type, _name):
     if _type == "Blueprint":
-        return None
+        parseProperty = None
+        if "ChangeMoveSpeed" in _name:
+            parseProperty = propertyType.TaskBlueprintProperty({"Speed":  property["Speed"]})
     if _type == "MoveTo":
         parseProperty = propertyType.TaskMoveToProperty(
             property["AcceptableRadius"], property["BlackboardKey"])
@@ -61,7 +63,7 @@ def parseTaskProperty(property, _type):
 def parseTaskNode(taskNode, blackboard):
     taskName = taskNode["Name"]
     taskType = taskNode["Type"]
-    taskProperty = parseTaskProperty(taskNode["Property"], taskType)
+    taskProperty = parseTaskProperty(taskNode["Property"], taskType, taskName)
     newTaskNode = behaviorTreeType.TaskNode(taskName, taskType, taskProperty,
                                             blackboard)
     return newTaskNode

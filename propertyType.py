@@ -1,4 +1,8 @@
 # Task node
+class TaskBlueprintProperty:
+    def __init__(self, variable):
+        self.variable = variable
+
 class TaskMoveToProperty:
     def __init__(self, acceptableRadius, blackboardKey):
         self.acceptableRadius = acceptableRadius
